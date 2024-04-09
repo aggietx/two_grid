@@ -14,9 +14,8 @@ tic;[~,~,~,~,~,~,bddof]=getallfacedof(nx,ny,nz);toc;closepara=0;
 nlocalface=3*n^2*(n+1);
 
 %% model
-K=floadbin('fracture3d_256x256x256_4.bin');K=reshape(K,256,256,256);
-K=repmat(K,[nx/256,nx/256,nx/256]);
-K(K==0)=maxvalue;
+nonzeroindex=floadbin('nonzeroindex.bin');
+K=ones(256,256,256);K(nonzeroindex)=maxvalue;
 contrast=max(K(:))/min(K(:));maxk=max(K(:));
 fprintf('contrast is %2.2e \n',contrast);
 
