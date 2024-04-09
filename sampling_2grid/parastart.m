@@ -2,7 +2,7 @@ delete(gcp('nocreate'))
 clear parapool
 if exist('parpool')~=1
 c = parcluster('local');
-c.NumWorkers =48/3;
+c.NumWorkers =12;
 parpool(c, c.NumWorkers);
 % matlabpool(c, c.NumWorkers);
 parpool.IdleTimeout = 1200000;
