@@ -88,7 +88,7 @@ end
 tic;[L,U,P,Q] = lu(Amsa);toc
 pmsac=Q*(U\(L\(P*(Fmsa))));
 pmsa=phimatrix_pa'*pmsac;%%%% ms initial condition
-pmsa=zeros(ne+1,1);
+%pmsa=zeros(ne+1,1);
 
 disp('fine ilu...')
    tic; [Lilu,Uilu]=ilu(Aeli);toc
