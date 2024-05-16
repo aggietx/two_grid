@@ -3,19 +3,19 @@
 clear;close all;
 % parastart; %%start parapool
 %% mesh
-q1=0;nmaxbasis=8;maxvalue=10^(6);overelement=0;overcorr=2;fprintf('overcorr is %d\n',overcorr);
+q1=0;nmaxbasis=8;maxvalue=10^(4);overelement=0;overcorr=2;fprintf('overcorr is %d\n',overcorr);
 maxit=2000;pretol=10^(-6);
 high=1;eigvalue_tol=.5;
 regularc=0;regvalue=10^(-14);%%%%%%%%%%%%%%%%
-n=8;Ny=8*4;h=.1; Nz=Ny;Nx=Ny;nx=Nx*n;ny=Ny*n;nz=Nz*n;Lx=h*nx;Ly=h*ny;Lz=h*nz;hx=h;hy=h;hz=h;  
+n=16;Ny=8;h=.1; Nz=Ny;Nx=Ny;nx=Nx*n;ny=Ny*n;nz=Nz*n;Lx=h*nx;Ly=h*ny;Lz=h*nz;hx=h;hy=h;hz=h;  
 nfacezx=(ny+1)*nz*nx;nfaceyx=(nz+1)*ny*nx;nfaceyz=ny*nz*(nx+1);nnx=nx+1;nny=ny+1;nnz=nz+1;
 nface=nfacezx+nfaceyx+nfaceyz;ne=nx*ny*nz;ndof=nface+ne;fprintf('nx and n are %d %d\n',nx,n);
 tic;[~,~,~,~,~,~,bddof]=getallfacedof(nx,ny,nz);toc;closepara=0;
 nlocalface=3*n^2*(n+1);
 
 %% model
-K=Construction_3D_perm_64_1(maxvalue);  
-K=repmat(K,[ny/64,nz/64,nx/64]);
+K=Construction_3D_perm256(maxvalue,nx/16);  
+
 contrast=max(K(:))/min(K(:));maxk=max(K(:));
 fprintf('contrast is %2.2e \n',contrast);
 
@@ -87,7 +87,7 @@ end
     disp('lu for coarse matrix');
 tic;[L,U,P,Q] = lu(Amsa);toc
 pmsac=Q*(U\(L\(P*(Fmsa))));
-%pmsa=phimatrix_pa'*pmsac;%%%% ms initial condition
+pmsa=phimatrix_pa'*pmsac;%%%% ms initial condition
 pmsa=zeros(ne+1,1);
 
 disp('fine ilu...')
@@ -105,7 +105,12 @@ if 1
  [ppre, error, iter, flag,condn,tpre] = pcg0_cond(Aeli, pmsa, Feli, maxit,pretol,precond); 
 else
     disp('solve with bicgstab...');
- t2grid1=tic;[ppre,flag,relres2,iter2]=bicgstab(Aeli,Feli,pretol, 5000,precond,[],phimatrix_pa'*pmsac);tpre=toc(t2grid1);iter=iter2*2;condn=0;
+ t2grid1=tic;[ppre,flag,relres2,iter2]=bicgstab(Aeli,Feli,pretol, 5000,precond,[],pmsa);tpre=toc(t2grid1);iter=iter2*2;condn=0;
+     disp('solve with gmres...');
+ t2grid1=tic;[ppre,flag,relres2,iter2]=gmres(Aeli,Feli,10,pretol, 5000,precond,[],pmsa);tpre=toc(t2grid1);iter=iter2*2;condn=0;
+    disp('solve with cg...');
+ t2grid1=tic;[ppre,flag,relres2,iter2]=pcg(Aeli,Feli,pretol, 5000,precond,[],pmsa);tpre=toc(t2grid1);iter=iter2*2;condn=0;
+
 end
  ndofc=size(Amsa,1)-2;%norm(Aeli*ppre-Feli)/norm(Feli)
 fprintf('tfinemat, tmsbasis, tcoarsemat are %2.1f  & %2.1f & %2.1f\n',tfineass,tbasis,tcms);
