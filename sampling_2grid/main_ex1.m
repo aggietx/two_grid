@@ -7,7 +7,7 @@ q1=0;nmaxbasis=8;maxvalue=10^(4);overelement=0;overcorr=2;fprintf('overcorr is %
 maxit=2000;pretol=10^(-6);
 high=1;eigvalue_tol=.5;
 regularc=0;regvalue=10^(-14);%%%%%%%%%%%%%%%%
-n=16;Ny=8;h=.1; Nz=Ny;Nx=Ny;nx=Nx*n;ny=Ny*n;nz=Nz*n;Lx=h*nx;Ly=h*ny;Lz=h*nz;hx=h;hy=h;hz=h;  
+n=8;Ny=32;h=.1; Nz=Ny;Nx=Ny;nx=Nx*n;ny=Ny*n;nz=Nz*n;Lx=h*nx;Ly=h*ny;Lz=h*nz;hx=h;hy=h;hz=h;  
 nfacezx=(ny+1)*nz*nx;nfaceyx=(nz+1)*ny*nx;nfaceyz=ny*nz*(nx+1);nnx=nx+1;nny=ny+1;nnz=nz+1;
 nface=nfacezx+nfaceyx+nfaceyz;ne=nx*ny*nz;ndof=nface+ne;fprintf('nx and n are %d %d\n',nx,n);
 tic;[~,~,~,~,~,~,bddof]=getallfacedof(nx,ny,nz);toc;closepara=0;
